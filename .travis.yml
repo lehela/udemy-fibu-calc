@@ -3,26 +3,26 @@ services:
   - docker
 
 before_install:
-# Build image from development definition
+  # Build image from development definition
   - docker image build -t lehela/fibu-react-gui-dev -f ./react-gui/Dockerfile.dev ./react-gui
 
 script:
-# Run tests on development image
-  - docker container run -rm lehela/fibu-react-gui-dev npm run test -- --coverage
+  # Run tests on development image
+  - docker container run lehela/fibu-react-gui-dev npm run test -- --coverage
 
 after_success:
-# Build all production images
+  # Build all production images
   - docker image build -t lehela/fibu-react-gui ./react-gui
   - docker image build -t lehela/fibu-api-server ./api-server
   - docker image build -t lehela/fibu-redis-watcher ./redis-watcher
   - docker image build -t lehela/fibu-nginx-portal ./nginx-portal
 
-# Login to Docker Hub
-- echo "$DOCKER_PWD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Login to Docker Hub
+  - echo "$DOCKER_PWD" | docker login -u "$DOCKER_ID" --password-stdin
 
-# Now push images to docker hub
-- docker push lehela/fibu-react-gui
-- docker push lehela/fibu-api-server
-- docker push lehela/fibu-redis-watcher
-- docker push lehela/fibu-nginx-portal
+  # Now push images to docker hub
+  - docker push lehela/fibu-react-gui
+  - docker push lehela/fibu-api-server
+  - docker push lehela/fibu-redis-watcher
+  - docker push lehela/fibu-nginx-portal
 
