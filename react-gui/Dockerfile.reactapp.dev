@@ -1,0 +1,11 @@
+FROM node:8.15.1-alpine
+
+# Initialize React App
+WORKDIR '/'
+RUN npx create-react-app app
+
+# Update dependencies
+WORKDIR '/app'
+
+# Run development server
+CMD ["npm","run","start"]

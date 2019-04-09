@@ -1,0 +1,55 @@
+version: "3"
+services:
+  postgres:
+    image:  postgres:11.2-alpine 
+  redis:
+    image:  redis:5.0
+
+  fibu-api:
+    image:  lehela/fibu-api
+    build:
+      context: ./api-server
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./api-server:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PG_USER=postgres
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_DB=postgres
+      - PG_PWD=postgres_password
+
+  fibu-gui:
+    image: lehela/fibu-gui
+    build:
+      context: ./react-gui
+      dockerfile: ./Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - ./react-gui:/app
+  
+  fibu-watcher:
+    image: lehela/fibu-watcher
+    build:
+      context: ./redis-watcher
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./redis-watcher:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+       
+  fibu-portal:
+    restart: always
+    image:  lehela/fibu-portal
+    build:
+      context: ./nginx-portal
+      dockerfile: ./Dockerfile.dev
+    ports:
+      - "8080:80"
